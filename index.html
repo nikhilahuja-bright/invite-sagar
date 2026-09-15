@@ -549,6 +549,21 @@ musicToggle.addEventListener('click', () => {
   musicPlaying = !musicPlaying;
 });
 
+// ---------- auto-start music on the user's first tap/click anywhere on the page ----------
+function startMusicOnFirstInteraction(e) {
+  if (musicToggle.contains(e.target)) return; // let the toggle button's own click handler manage this tap
+  if (!musicPlaying) {
+    bgMusic.play().then(() => {
+      musicPlaying = true;
+      musicToggle.textContent = '⏸';
+      musicToggle.classList.add('spinning');
+    }).catch(() => {
+      // autoplay blocked — user can still start it via the toggle button
+    });
+  }
+}
+document.addEventListener('pointerdown', startMusicOnFirstInteraction, { once: true });
+
 // ---------- hide the intro curtain after its animation, so it stops blocking clicks ----------
 const curtainEl = document.getElementById('curtain');
 if (curtainEl) {

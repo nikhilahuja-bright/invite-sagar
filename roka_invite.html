@@ -184,9 +184,11 @@
     animation-delay:3.5s;
   }
   .roka-tag .word{
+    display:inline-block;
     font-family:'Cinzel',serif;
     font-size:26px;
     letter-spacing:10px;
+    margin-right:-10px; /* trailing letter-spacing after the last char throws off text-align:center */
     color:var(--gold-light);
     text-shadow:0 0 20px rgba(212,175,106,.4);
   }

@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Sagar &amp; Simran — Roka</title>
+<style>
+  :root{
+    --maroon:#5c0f1e;
+    --deep-maroon:#3d0a14;
+    --gold:#d4af6a;
+    --gold-light:#f2dfae;
+    --cream:#fbf3e3;
+    --ink:#2a1810;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{
+    height:100%;
+    background:var(--deep-maroon);
+    font-family:'Cormorant Garamond', 'Georgia', serif;
+    overflow-x:hidden;
+    -webkit-tap-highlight-color:transparent;
+  }
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Cinzel:wght@500;600;700&display=swap');
+
+  .stage{
+    max-width:430px;
+    margin:0 auto;
+    min-height:100vh;
+    position:relative;
+    background:
+      radial-gradient(circle at 50% 0%, #741526 0%, var(--deep-maroon) 60%);
+    perspective:1200px;
+    overflow:hidden;
+  }
+
+  /* ---------- Floating diyas / petals background ---------- */
+  .bg-layer{position:fixed; inset:0; max-width:430px; margin:0 auto; pointer-events:none; z-index:0; overflow:hidden;}
+  .petal{
+    position:absolute; top:-40px;
+    width:14px; height:14px;
+    background:var(--gold);
+    opacity:.55;
+    border-radius:0 60% 0 60%;
+    animation:fall linear infinite;
+    filter:drop-shadow(0 0 3px rgba(212,175,106,.6));
+  }
+  @keyframes fall{
+    0%{transform:translateY(-5vh) rotate(0deg) translateX(0);}
+    100%{transform:translateY(105vh) rotate(360deg) translateX(20px);}
+  }
+
+  /* ---------- Curtain intro ---------- */
+  .curtain{
+    position:fixed; inset:0; max-width:430px; margin:0 auto;
+    z-index:50; display:flex;
+    transition:visibility 0s linear 3.2s;
+  }
+  .curtain.done{
+    visibility:hidden;
+    pointer-events:none;
+  }
+  .panel{
+    flex:1; background:linear-gradient(180deg,#7a1626,#4a0d18);
+    position:relative;
+    box-shadow:inset 0 0 60px rgba(0,0,0,.5);
+    animation:openPanel 1.4s 1.6s cubic-bezier(.77,0,.18,1) forwards;
+  }
+  .panel::before{
+    content:"";
+    position:absolute; inset:10px;
+    border:1px solid rgba(212,175,106,.5);
+  }
+  .panel.left{animation-name:openLeft;}
+  .panel.right{animation-name:openRight;}
+  @keyframes openLeft{to{transform:translateX(-100%);}}
+  @keyframes openRight{to{transform:translateX(100%);}}
+
+  .curtain-emblem{
+    position:absolute; top:50%; left:50%;
+    transform:translate(-50%,-50%);
+    text-align:center;
+    color:var(--gold-light);
+    z-index:2;
+    animation:emblemOut .6s 1.5s forwards;
+  }
+  @keyframes emblemOut{to{opacity:0; visibility:hidden;}}
+  .curtain-emblem .om{
+    font-size:44px;
+    animation:pulseGlow 1.6s ease-in-out infinite;
+  }
+  .curtain-emblem p{
+    font-family:'Cinzel',serif;
+    letter-spacing:4px;
+    font-size:12px;
+    margin-top:10px;
+    color:var(--gold);
+  }
+  @keyframes pulseGlow{
+    0%,100%{text-shadow:0 0 10px rgba(212,175,106,.5); transform:scale(1);}
+    50%{text-shadow:0 0 26px rgba(212,175,106,.95); transform:scale(1.08);}
+  }
+
+  /* ---------- Content ---------- */
+  .content{
+    position:relative; z-index:1;
+    padding:36px 24px 60px;
+    color:var(--gold-light);
+  }
+
+  .fade-up{
+    opacity:0; transform:translateY(24px);
+    animation:fadeUp 1s ease forwards;
+  }
+  @keyframes fadeUp{to{opacity:1; transform:translateY(0);}}
+
+  .ganesh{
+    text-align:center;
+    font-size:30px;
+    color:var(--gold);
+    animation-delay:2.6s;
+    text-shadow:0 0 18px rgba(212,175,106,.5);
+  }
+  .ganesh-sub{
+    text-align:center;
+    font-size:12px;
+    letter-spacing:3px;
+    color:var(--gold);
+    font-family:'Cinzel',serif;
+    margin-top:6px;
+    animation-delay:2.8s;
+  }
+
+  .divider{
+    display:flex; align-items:center; gap:10px;
+    margin:22px auto; width:70%;
+    animation-delay:3s;
+  }
+  .divider span{height:1px; flex:1; background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+  .divider .dot{width:6px;height:6px;border-radius:50%;background:var(--gold); flex:none;}
+
+  .invite-label{
+    text-align:center;
+    font-family:'Cinzel',serif;
+    letter-spacing:5px;
+    font-size:11px;
+    color:#c9a469;
+    animation-delay:3.1s;
+  }
+
+  .names-wrap{
+    text-align:center;
+    margin-top:18px;
+    animation-delay:3.3s;
+  }
+  .name{
+    font-family:'Cinzel',serif;
+    font-size:44px;
+    line-height:1.15;
+    background:linear-gradient(180deg,var(--gold-light),var(--gold) 55%,#a9793a);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    text-shadow:0 2px 10px rgba(0,0,0,.35);
+  }
+  .amp{
+    font-family:'Cormorant Garamond',serif;
+    font-style:italic;
+    font-size:26px;
+    color:var(--gold);
+    margin:2px 0;
+    display:block;
+  }
+  .families{
+    margin-top:10px;
+    font-size:14px;
+    letter-spacing:1px;
+    color:#e3c99a;
+  }
+
+  .roka-tag{
+    text-align:center;
+    margin-top:22px;
+    animation-delay:3.5s;
+  }
+  .roka-tag .word{
+    font-family:'Cinzel',serif;
+    font-size:26px;
+    letter-spacing:10px;
+    color:var(--gold-light);
+    text-shadow:0 0 20px rgba(212,175,106,.4);
+  }
+  .roka-tag .sub{
+    margin-top:6px;
+    font-size:13px;
+    font-style:italic;
+    color:#d8b988;
+  }
+
+  .msg{
+    margin-top:26px;
+    text-align:center;
+    font-size:15.5px;
+    line-height:1.75;
+    color:#f0e3c6;
+    padding:0 6px;
+    animation-delay:3.7s;
+  }
+
+  /* ---------- 3D card ---------- */
+  .card-zone{
+    margin-top:34px;
+    animation-delay:3.9s;
+  }
+  .card-3d{
+    width:100%;
+    max-width:340px;
+    margin:0 auto;
+    aspect-ratio:16/10;
+    position:relative;
+    transform-style:preserve-3d;
+    transform:rotateX(8deg) rotateY(-10deg);
+    animation:cardFloat 5s ease-in-out infinite;
+    cursor:grab;
+  }
+  @keyframes cardFloat{
+    0%,100%{transform:rotateX(8deg) rotateY(-10deg) translateY(0);}
+    50%{transform:rotateX(4deg) rotateY(6deg) translateY(-8px);}
+  }
+  .card-face{
+    position:absolute; inset:0;
+    border-radius:14px;
+    background:
+      linear-gradient(135deg, #7a1a2a 0%, #5c0f1e 45%, #3d0a14 100%);
+    border:1.5px solid rgba(212,175,106,.7);
+    box-shadow:
+      0 30px 40px -10px rgba(0,0,0,.6),
+      inset 0 0 40px rgba(212,175,106,.08);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:14px;
+  }
+  .card-face::before{
+    content:"";
+    position:absolute; inset:8px;
+    border:1px solid rgba(212,175,106,.4);
+    border-radius:8px;
+    pointer-events:none;
+  }
+  .card-face .tag{
+    font-family:'Cinzel',serif;
+    font-size:11px;
+    letter-spacing:4px;
+    color:var(--gold);
+  }
+  .card-face .big{
+    font-family:'Cinzel',serif;
+    font-size:22px;
+    color:var(--gold-light);
+    margin-top:8px;
+    letter-spacing:2px;
+  }
+  .card-face .small{
+    margin-top:6px;
+    font-size:13px;
+    color:#e6cfa1;
+  }
+
+  /* ---------- Details ---------- */
+  .details{
+    margin-top:34px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    animation-delay:4.1s;
+  }
+  .detail-row{
+    display:flex; align-items:center; gap:14px;
+    background:linear-gradient(90deg, rgba(212,175,106,.08), rgba(212,175,106,.02));
+    border:1px solid rgba(212,175,106,.35);
+    border-radius:10px;
+    padding:13px 16px;
+  }
+  .detail-row .icon{
+    font-size:20px;
+    color:var(--gold);
+    width:26px; text-align:center;
+    flex:none;
+  }
+  .detail-row .txt .label{
+    font-family:'Cinzel',serif;
+    font-size:10px;
+    letter-spacing:2px;
+    color:#c9a469;
+  }
+  .detail-row .txt .val{
+    font-size:16px;
+    color:var(--gold-light);
+    margin-top:2px;
+  }
+
+  /* ---------- Scratch card ---------- */
+  .scratch-zone{
+    margin-top:36px;
+    text-align:center;
+    animation-delay:4.3s;
+  }
+  .scratch-title{
+    font-family:'Cinzel',serif;
+    font-size:12px;
+    letter-spacing:3px;
+    color:var(--gold);
+    margin-bottom:14px;
+  }
+  .scratch-wrap{
+    position:relative;
+    width:260px;
+    height:260px;
+    margin:0 auto;
+    border-radius:50%;
+    box-shadow:0 0 0 4px rgba(212,175,106,.5), 0 20px 40px rgba(0,0,0,.5);
+  }
+  .reveal-under{
+    position:absolute; inset:0;
+    border-radius:50%;
+    background:radial-gradient(circle at 50% 30%, #7a1626, #3d0a14 75%);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    color:var(--gold-light);
+    text-align:center;
+  }
+  .reveal-under .d-label{
+    font-family:'Cinzel',serif;
+    font-size:11px;
+    letter-spacing:3px;
+    color:var(--gold);
+  }
+  .reveal-under .d-date{
+    font-family:'Cinzel',serif;
+    font-size:40px;
+    margin:6px 0 2px;
+    text-shadow:0 0 20px rgba(212,175,106,.6);
+  }
+  .reveal-under .d-month{
+    font-size:16px;
+    letter-spacing:4px;
+    color:#e6cfa1;
+  }
+  .reveal-under .d-time{
+    margin-top:10px;
+    font-size:14px;
+    font-style:italic;
+    color:#d8b988;
+  }
+  canvas#scratchCanvas{
+    position:absolute; inset:0;
+    border-radius:50%;
+    touch-action:none;
+    -webkit-touch-callout:none;
+    -webkit-user-select:none;
+    user-select:none;
+    -webkit-user-drag:none;
+  }
+  .scratch-hint{
+    margin-top:14px;
+    font-size:12.5px;
+    color:#c9a469;
+    font-style:italic;
+    opacity:.9;
+    animation:hintPulse 1.8s ease-in-out infinite;
+  }
+  @keyframes hintPulse{0%,100%{opacity:.55;}50%{opacity:1;}}
+
+  .confetti-canvas{
+    position:fixed; inset:0; max-width:430px; margin:0 auto;
+    pointer-events:none; z-index:40;
+  }
+
+  .footer{
+    margin-top:44px;
+    text-align:center;
+    animation-delay:4.5s;
+  }
+  .footer .line1{
+    font-family:'Cinzel',serif;
+    font-size:13px;
+    letter-spacing:3px;
+    color:var(--gold);
+  }
+  .footer .line2{
+    margin-top:6px;
+    font-size:13px;
+    color:#d8b988;
+  }
+  .footer .motif{
+    margin-top:18px;
+    font-size:18px;
+    color:var(--gold);
+    letter-spacing:8px;
+  }
+
+  .music-toggle{
+    position:fixed;
+    bottom:22px; right:22px;
+    max-width:430px;
+    z-index:60;
+    width:52px; height:52px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #f2dfae, #d4af6a 55%, #8a6631);
+    border:1.5px solid rgba(255,255,255,.4);
+    box-shadow:0 8px 20px rgba(0,0,0,.5);
+    display:flex; align-items:center; justify-content:center;
+    font-size:20px;
+    color:#3d0a14;
+    cursor:pointer;
+  }
+  .music-toggle.spinning{
+    animation:spin 4s linear infinite;
+  }
+  @keyframes spin{ to{transform:rotate(360deg);} }
+
+  ::selection{background:rgba(212,175,106,.4);}
+</style>
+</head>
+<body>
+
+<div class="stage" id="stage">
+
+  <!-- background floating petals -->
+  <div class="bg-layer" id="bgLayer"></div>
+
+  <!-- intro curtain -->
+  <div class="curtain" id="curtain">
+    <div class="panel left"></div>
+    <div class="panel right"></div>
+    <div class="curtain-emblem">
+      <div class="om">ॐ</div>
+      <p>THE ROKA CEREMONY</p>
+    </div>
+  </div>
+
+  <!-- confetti canvas for reveal -->
+  <canvas class="confetti-canvas" id="confettiCanvas"></canvas>
+
+  <!-- background music: replace song.mp3 with your own royalty-free file, same folder as this html -->
+  <audio id="bgMusic" src="song.mp3" loop preload="auto"></audio>
+  <button type="button" class="music-toggle" id="musicToggle" aria-label="Play music">🎵</button>
+
+  <div class="content">
+
+    <div class="ganesh fade-up">ॐ</div>
+    <div class="ganesh-sub fade-up">Shree Ganeshaya Namah</div>
+
+    <div class="divider fade-up"><span></span><span class="dot"></span><span></span></div>
+
+    <div class="invite-label fade-up">Together with their families</div>
+
+    <div class="names-wrap fade-up">
+      <div class="name">Sagar</div>
+      <span class="amp">&amp;</span>
+      <div class="name">Simran</div>
+      <div class="families">Ahuja Family &nbsp;•&nbsp; Kalra Family</div>
+    </div>
+
+    <div class="roka-tag fade-up">
+      <div class="word">R O K A</div>
+      <div class="sub">invite you to celebrate the beginning of forever</div>
+    </div>
+
+    <p class="msg fade-up">
+      With hearts full of joy, we welcome you to be part of our Roka —
+      the sacred moment where two families become one, and a promise
+      is made before it becomes a vow. Your blessings mean the world to us.
+    </p>
+
+    <div class="card-zone fade-up">
+      <div class="card-3d" id="card3d">
+        <div class="card-face">
+          <div class="tag">SAVE THE DATE</div>
+          <div class="big">Sagar &amp; Simran</div>
+          <div class="small">Roka Ceremony • Park Queen</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="details fade-up">
+      <div class="detail-row">
+        <div class="icon">📍</div>
+        <div class="txt">
+          <div class="label">VENUE</div>
+          <div class="val">Park Queen</div>
+        </div>
+      </div>
+      <div class="detail-row">
+        <div class="icon">🕖</div>
+        <div class="txt">
+          <div class="label">TIME</div>
+          <div class="val">7:00 PM Onwards</div>
+        </div>
+      </div>
+      <div class="detail-row">
+        <div class="icon">👪</div>
+        <div class="txt">
+          <div class="label">FAMILIES</div>
+          <div class="val">Ahuja &amp; Kalra</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scratch-zone fade-up">
+      <div class="scratch-title">SCRATCH TO REVEAL THE DATE</div>
+      <div class="scratch-wrap">
+        <div class="reveal-under">
+          <div class="d-label">THE DATE IS</div>
+          <div class="d-date">22</div>
+          <div class="d-month">SEPTEMBER</div>
+          <div class="d-time">7:00 PM • Park Queen</div>
+        </div>
+        <canvas id="scratchCanvas" width="260" height="260"></canvas>
+      </div>
+      <div class="scratch-hint" id="scratchHint">✦ Rub gently with your finger ✦</div>
+    </div>
+
+    <div class="footer fade-up">
+      <div class="line1">WITH LOVE &amp; BLESSINGS</div>
+      <div class="line2">Ahuja Family &amp; Kalra Family</div>
+      <div class="motif">✦ ✦ ✦</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ---------- background music ----------
+const bgMusic = document.getElementById('bgMusic');
+const musicToggle = document.getElementById('musicToggle');
+let musicPlaying = false;
+
+musicToggle.addEventListener('click', () => {
+  if (musicPlaying) {
+    bgMusic.pause();
+    musicToggle.textContent = '🎵';
+    musicToggle.classList.remove('spinning');
+  } else {
+    bgMusic.play().catch(() => {
+      // file missing or browser blocked autoplay — ignore silently
+    });
+    musicToggle.textContent = '⏸';
+    musicToggle.classList.add('spinning');
+  }
+  musicPlaying = !musicPlaying;
+});
+
+// ---------- hide the intro curtain after its animation, so it stops blocking clicks ----------
+const curtainEl = document.getElementById('curtain');
+if (curtainEl) {
+  setTimeout(() => {
+    curtainEl.style.pointerEvents = 'none';
+    curtainEl.style.visibility = 'hidden';
+  }, 3100);
+}
+
+// ---------- floating petals ----------const bgLayer = document.getElementById('bgLayer');
+const petalCount = 18;
+for(let i=0;i<petalCount;i++){
+  const p = document.createElement('div');
+  p.className='petal';
+  const left = Math.random()*100;
+  const delay = Math.random()*10;
+  const dur = 8 + Math.random()*10;
+  const size = 8 + Math.random()*10;
+  p.style.left = left+'%';
+  p.style.animationDelay = delay+'s';
+  p.style.animationDuration = dur+'s';
+  p.style.width = size+'px';
+  p.style.height = size+'px';
+  p.style.opacity = 0.25 + Math.random()*0.4;
+  bgLayer.appendChild(p);
+}
+
+// ---------- 3D card tilt on touch/drag ----------
+const card = document.getElementById('card3d');
+let isDown=false, startX=0, startY=0;
+function setTilt(rx,ry){
+  card.style.animation='none';
+  card.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
+}
+function resetFloat(){
+  card.style.animation='cardFloat 5s ease-in-out infinite';
+}
+card.addEventListener('touchstart',(e)=>{
+  isDown=true;
+  startX=e.touches[0].clientX; startY=e.touches[0].clientY;
+});
+card.addEventListener('touchmove',(e)=>{
+  if(!isDown) return;
+  const dx = e.touches[0].clientX-startX;
+  const dy = e.touches[0].clientY-startY;
+  setTilt(8-dy/8, -10+dx/8);
+});
+card.addEventListener('touchend',()=>{isDown=false; setTimeout(resetFloat,300);});
+
+// ---------- scratch card ----------
+// Fixed 260x260 canvas — matches .scratch-wrap exactly, no dynamic resizing
+// (dynamic devicePixelRatio resizing was causing layout glitches on some phones)
+const canvas = document.getElementById('scratchCanvas');
+const ctx = canvas.getContext('2d');
+const hint = document.getElementById('scratchHint');
+
+function drawScratchLayer(){
+  const w = canvas.width, h = canvas.height;
+  const grad = ctx.createLinearGradient(0,0,w,h);
+  grad.addColorStop(0,'#c9a469');
+  grad.addColorStop(0.5,'#e6cfa1');
+  grad.addColorStop(1,'#a9793a');
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.arc(w/2,h/2,w/2,0,Math.PI*2);
+  ctx.fill();
+
+  // texture pattern
+  ctx.fillStyle='rgba(92,15,30,0.12)';
+  for(let i=0;i<40;i++){
+    const rx=Math.random()*w, ry=Math.random()*h, rr=1+Math.random()*2;
+    ctx.beginPath();
+    ctx.arc(rx,ry,rr,0,Math.PI*2);
+    ctx.fill();
+  }
+
+  ctx.font = "600 15px 'Cinzel', serif";
+  ctx.fillStyle = '#5c0f1e';
+  ctx.textAlign='center';
+  ctx.textBaseline='middle';
+  ctx.fillText('SCRATCH HERE', w/2, h/2-10);
+  ctx.font = "13px 'Cormorant Garamond', serif";
+  ctx.fillText('✦ reveal our date ✦', w/2, h/2+16);
+}
+
+drawScratchLayer();
+
+let scratching=false;
+let revealed=false;
+let moveCount=0;
+
+function getPos(e){
+  const rect = canvas.getBoundingClientRect();
+  // canvas internal resolution (260x260) may differ from its rendered CSS size,
+  // so scale pointer coordinates into canvas pixel space
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  return {x:(e.clientX-rect.left)*scaleX, y:(e.clientY-rect.top)*scaleY};
+}
+
+function scratchAt(x,y){
+  ctx.globalCompositeOperation='destination-out';
+  ctx.beginPath();
+  ctx.arc(x,y,30,0,Math.PI*2);
+  ctx.fill();
+}
+
+function checkRevealProgress(){
+  const rect = canvas.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  const sampleW = Math.floor(rect.width);
+  const sampleH = Math.floor(rect.height);
+  const imgData = ctx.getImageData(0,0,canvas.width,canvas.height).data;
+  let cleared=0, total=0;
+  const step = 6; // sample every Nth device pixel for performance
+  for(let y=0;y<canvas.height;y+=step){
+    for(let x=0;x<canvas.width;x+=step){
+      const idx = (y*canvas.width+x)*4+3;
+      if(idx < imgData.length){
+        total++;
+        if(imgData[idx]===0) cleared++;
+      }
+    }
+  }
+  const ratio = total ? cleared/total : 0;
+  if(ratio>0.35 && !revealed){
+    revealed=true;
+    fadeOutCanvas();
+    launchConfetti();
+    hint.style.display='none';
+  }
+}
+
+function fadeOutCanvas(){
+  canvas.style.transition='opacity .8s ease';
+  canvas.style.opacity='0';
+  setTimeout(()=>{canvas.style.pointerEvents='none';},800);
+}
+
+function startScratch(e){
+  scratching=true;
+  hint.style.opacity='0';
+  if(e.pointerId !== undefined && canvas.setPointerCapture){
+    try{ canvas.setPointerCapture(e.pointerId); }catch(err){}
+  }
+  const pos=getPos(e);
+  scratchAt(pos.x,pos.y);
+  moveCount=0;
+}
+function moveScratch(e){
+  if(!scratching) return;
+  const pos=getPos(e);
+  scratchAt(pos.x,pos.y);
+  checkRevealProgress();
+}
+function endScratch(){
+  if(scratching) checkRevealProgress();
+  scratching=false;
+}
+
+// Normalize touch events to the same {clientX, clientY} shape used by getPos()
+function touchPos(e){
+  const t = e.touches[0] || e.changedTouches[0];
+  return {clientX:t.clientX, clientY:t.clientY};
+}
+
+canvas.style.touchAction='none';
+
+// Pointer events (modern browsers)
+canvas.addEventListener('pointerdown', startScratch);
+canvas.addEventListener('pointermove', moveScratch);
+canvas.addEventListener('pointerup', endScratch);
+canvas.addEventListener('pointercancel', endScratch);
+canvas.addEventListener('pointerleave', endScratch);
+
+// Touch events as a parallel fallback for webviews with limited Pointer Event support
+canvas.addEventListener('touchstart', function(e){
+  e.preventDefault();
+  startScratch(touchPos(e));
+}, {passive:false});
+canvas.addEventListener('touchmove', function(e){
+  e.preventDefault();
+  moveScratch(touchPos(e));
+}, {passive:false});
+canvas.addEventListener('touchend', function(e){
+  e.preventDefault();
+  endScratch();
+}, {passive:false});
+canvas.addEventListener('touchcancel', endScratch);
+
+// Mouse events as a further fallback (desktop / some webviews)
+canvas.addEventListener('mousedown', startScratch);
+canvas.addEventListener('mousemove', moveScratch);
+canvas.addEventListener('mouseup', endScratch);
+canvas.addEventListener('mouseleave', endScratch);
+
+
+
+// ---------- confetti ----------
+const confettiCanvas = document.getElementById('confettiCanvas');
+const cctx = confettiCanvas.getContext('2d');
+function sizeConfetti(){
+  confettiCanvas.width = confettiCanvas.clientWidth;
+  confettiCanvas.height = window.innerHeight;
+}
+sizeConfetti();
+window.addEventListener('resize', sizeConfetti);
+
+function launchConfetti(){
+  const colors = ['#d4af6a','#f2dfae','#a9793a','#fff3d6','#7a1626'];
+  const pieces = [];
+  const rect = document.getElementById('scratchCanvas').getBoundingClientRect();
+  const stageRect = document.getElementById('stage').getBoundingClientRect();
+  const originX = rect.left - stageRect.left + rect.width/2;
+  const originY = rect.top - stageRect.top + rect.height/2;
+
+  for(let i=0;i<90;i++){
+    pieces.push({
+      x:originX, y:originY,
+      vx:(Math.random()-0.5)*10,
+      vy:(Math.random()*-10)-3,
+      size:4+Math.random()*5,
+      color:colors[Math.floor(Math.random()*colors.length)],
+      rot:Math.random()*360,
+      vr:(Math.random()-0.5)*12,
+      life:0
+    });
+  }
+  function frame(){
+    cctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+    let alive=false;
+    pieces.forEach(p=>{
+      p.life++;
+      if(p.life>140) return;
+      alive=true;
+      p.vy += 0.28;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rot += p.vr;
+      cctx.save();
+      cctx.translate(p.x,p.y);
+      cctx.rotate(p.rot*Math.PI/180);
+      cctx.fillStyle=p.color;
+      cctx.fillRect(-p.size/2,-p.size/2,p.size,p.size*0.6);
+      cctx.restore();
+    });
+    if(alive) requestAnimationFrame(frame);
+    else cctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+  }
+  frame();
+}
+</script>
+
+</body>
+</html>
